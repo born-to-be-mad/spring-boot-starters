@@ -7,6 +7,10 @@ group = 'by.dma'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+ext {
+    lombokVersion = "1.18.24"
+}
+
 repositories {
     mavenCentral()
 }
@@ -32,8 +36,8 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    compileOnly('org.projectlombok:lombok:1.18.24')
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
 compileJava.dependsOn(processResources)
