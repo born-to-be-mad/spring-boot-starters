@@ -9,7 +9,7 @@ import lombok.Data;
 
 @ConfigurationProperties(prefix = "eventsampler.listener")
 @Data
-class EventListenerProperties {
+public class EventListenerProperties {
 
     /**
      * List of event types that will be passed to {@link EventListener} implementations.
