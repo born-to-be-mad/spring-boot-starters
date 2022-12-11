@@ -1,0 +1,6 @@
+eventsampler:
+  enabled: true
+  listener:
+    enabled-events:
+      - humble
+      - hungry
