@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "auth.verification.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enables or disables the ApiCallInterceptorStarter completely. If disabled, no ApiCallInterceptor bean will be available in the application context."
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'by.dma'
+version = '0.0.1'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:2.7.11")
+    }
+}
+
+dependencies {
+    /*To get the basic Spring Boot features into our starter, we need to declare a dependency to the basic Spring Boot starter*/
+    implementation 'org.springframework.boot:spring-boot-starter'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    /*
+    For each auto-configuration class on the classpath, Spring Boot has to evaluate the conditions encoded
+    within the @Conditional... annotations to decide whether to load the auto-configuration and all the classes it needs.
+    Depending on the size and number of starters in a Spring Boot application, this can be a very expensive operation and affect startup time.
+    During the `build`, the metadata will be generated into the META-INF/spring-autoconfigure-metadata.properties file.
+     */
+    annotationProcessor 'org.springframework.boot:spring-boot-autoconfigure-processor'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+compileJava.dependsOn(processResources)
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact jar
+        }
+    }
+}
