@@ -1,4 +1,4 @@
-package by.dma.apicallinterceptor.starter;
+package by.dma.apicallinterceptor.starter.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

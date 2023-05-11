@@ -1,4 +1,4 @@
-package by.dma.apicallinterceptor.starter;
+package by.dma.apicallinterceptor.starter.config;
 
 import java.util.Collections;
 import java.util.List;

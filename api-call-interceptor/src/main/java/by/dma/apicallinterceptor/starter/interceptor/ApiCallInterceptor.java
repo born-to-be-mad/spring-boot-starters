@@ -3,12 +3,14 @@ package by.dma.apicallinterceptor.starter.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import by.dma.apicallinterceptor.starter.AuthVerificationProperties;
+import by.dma.apicallinterceptor.starter.config.AuthVerificationProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,33 +55,33 @@ public class ApiCallInterceptor implements HandlerInterceptor {
     }
 
     private boolean isEnabled(String authCheck) {
-        return properties.getEnabledChecks().contains(authCheck);
+        // return properties.getEnabledChecks().contains(authCheck);
+        return true;
     }
 
     private String sanitizeParameters(HttpServletRequest request) {
         StringBuffer posted = new StringBuffer();
         Enumeration<?> e = request.getParameterNames();
-        if (e != null) {
-            posted.append("?");
+        if (e == null) {
+            return "";
         }
+        posted.append("?");
         while (e.hasMoreElements()) {
             if (posted.length() > 1) {
                 posted.append("&");
             }
             String curr = (String) e.nextElement();
-            posted.append(curr + "=");
-            if (curr.contains("password")
-                || curr.contains("pass")
-                || curr.contains("pwd")) {
+            posted.append(curr).append("=");
+            if (curr.contains("password") || curr.contains("pass") || curr.contains("pwd")) {
                 posted.append("*****");
             } else {
                 posted.append(request.getParameter(curr));
             }
         }
         String ip = request.getHeader("X-FORWARDED-FOR");
-        String ipAddr = (ip == null) ? getRemoteAddr(request) : ip;
-        if (ipAddr != null && !ipAddr.equals("")) {
-            posted.append("&_psip=" + ipAddr);
+        String ipAddr = Optional.ofNullable(ip).orElseGet(() -> getRemoteAddr(request));
+        if (StringUtils.hasText(ipAddr)) {
+            posted.append("&_psip=").append(ipAddr);
         }
         return posted.toString();
     }

@@ -19,7 +19,7 @@ public class LoggedUserInterceptor implements HandlerInterceptor {
             throws Exception {
 
         if (isUserLogged()) {
-            addToSessionUserDetails(request.getSession());
+            populateUserDataToSession(request.getSession());
         }
         return true;
     }
@@ -35,12 +35,12 @@ public class LoggedUserInterceptor implements HandlerInterceptor {
         }
     }
 
-    private void addToSessionUserDetails(HttpSession session) {
-        log.info("================= addToSessionUserDetails ============================");
+    private void populateUserDataToSession(HttpSession session) {
+        log.info("================= populateUserDataToSession ============================");
         var loggedUser = getLoggedUser();
         session.setAttribute("username", loggedUser);
         log.info("user(" + loggedUser + ") session : " + session);
-        log.info("================= addToSessionUserDetails ============================");
+        log.info("================= populateUserDataToSession ============================");
 
     }
 
