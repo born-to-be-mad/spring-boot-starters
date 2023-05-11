@@ -7,19 +7,20 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import by.dma.apicallinterceptor.starter.config.AuthVerificationProperties;
-import lombok.RequiredArgsConstructor;
+import by.dma.apicallinterceptor.starter.service.AnotherServiceAuthChecker;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ApiCallInterceptor implements HandlerInterceptor {
 
-    private final AuthVerificationProperties properties;
+    private final AnotherServiceAuthChecker authChecker;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -28,7 +29,10 @@ public class ApiCallInterceptor implements HandlerInterceptor {
         log.info(decorateMessage("PreHandle - main authentication logic", request));
         log.debug("[preHandle][" + request + "]" + "[" + request.getMethod()
                   + "]" + request.getRequestURI() + sanitizeParameters(request));
-        // we can return true or false depending on our logic to allow user to access rest controller api
+        boolean isExcluded = isExcluded(handler);
+        if (!isExcluded) {
+            authChecker.init();
+        }
         return true;
     }
 
@@ -37,6 +41,18 @@ public class ApiCallInterceptor implements HandlerInterceptor {
             ModelAndView modelAndView) throws Exception {
 
         log.info(decorateMessage("PostHandle", request));
+    }
+
+    private boolean isExcluded(Object handler) {
+        if (handler instanceof HandlerMethod handlerMethod) {
+            var isExcluded = handlerMethod.getBeanType().isAnnotationPresent(ExcludeFromInterception.class) ||
+                             handlerMethod.getMethodAnnotation(ExcludeFromInterception.class) != null;
+            if (isExcluded) {
+                log.debug("Method {} is excluded from interception", handlerMethod.getMethod().getName());
+            }
+            return isExcluded;
+        }
+        return false;
     }
 
     @Override
